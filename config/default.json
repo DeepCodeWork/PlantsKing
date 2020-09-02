@@ -1,4 +1,0 @@
-{
-    "PORT":8000,
-    "Database_Url": "mongodb+srv://plantsKing:deepkumar02@cluster0.uyzbq.mongodb.net/test?retryWrites=true&w=majority"
-}
