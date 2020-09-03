@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const bcryptjs = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const config = require('config');
+const jwtSecretKey = config.get('jwt_secret_key');
 
 const userSchema = new mongoose.Schema({
 
@@ -23,7 +26,7 @@ const userSchema = new mongoose.Schema({
         type : String,
         trim : true,
         required : true,
-        maxlength : 32
+        minlength : 6
     },
 
     about:{
@@ -31,20 +34,52 @@ const userSchema = new mongoose.Schema({
         trim: true
     },
 
+    history:{
+        type: Array,
+        default: []
+    },
+
     role: {
         type: String,
         enum: ['USER', 'ADMIN'],
         default: 'USER'
-    }
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }]
 
 }, {timestamps: true});
 
-const user = mongoose.model('user', userSchema);
-
-userSchema.pre( 'save' , async function (next){
-
+//Hashing password
+userSchema.pre('save', async function(next){
     const user = this;
-    user.password = await bcryptjs.hash( user.password, 8 );
-
+    if(user.isModified('password')){
+        user.password = await bcryptjs.hash( user.password, 8 );
+    }
+    
     next();
 })
+
+//Generating auth token
+userSchema.methods.generateAuthToken = async function(){
+    const user = this;
+    console.log(user._id);
+    const token = jwt.sign({ _id: user._id.toString() }, jwtSecretKey);
+    console.log(jwt.verify(token, jwtSecretKey));
+    user.tokens = user.tokens.concat({token});
+    await user.save();
+    return token;
+}
+
+const User = mongoose.model('user', userSchema);
+
+module.exports = User;

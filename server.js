@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
 const dbConnect = require('./Database/dbConnect');
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/User');
+const categoryRoutes = require('./routes/Category');
 const config = require('config');
 const PORT = config.get('PORT');
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 //Routes
 app.use( '/api' , userRoutes );
+app.use( '/api', categoryRoutes);
 
 //Connecting database
 dbConnect();
