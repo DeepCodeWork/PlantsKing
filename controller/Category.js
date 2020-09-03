@@ -1,15 +1,13 @@
 const CategoryModel = require('../models/Category');
-const { validationResult } = require('express-validator');
+const {Validation} = require('../ErrorHandler/Validation/Validation');
 
+//Add new category
 exports.createCategory = async (req, res) => {
 
    try {
         //Validation
-        const errors = validationResult(req)
-        if(!errors.isEmpty()){
-            return res.status(400).send({errors: errors.array()})
-    }
-    
+        Validation(req);
+
         //Saving doc
         const category = new CategoryModel(req.body);
         category.save()
@@ -21,6 +19,7 @@ exports.createCategory = async (req, res) => {
 
 }
 
+//Update category  
 exports.updateCategory = async (req, res) => {
     try {
 
@@ -39,6 +38,7 @@ exports.updateCategory = async (req, res) => {
     }
 }
 
+//delete category
 exports.deleteCategory = async (req, res) => {
     try {
         const category = req.query.name;
@@ -55,6 +55,8 @@ exports.deleteCategory = async (req, res) => {
     }
 }
 
+
+//Fetch all category
 exports.getAllCategory = async (req, res) => {
     try {
         const categories = await CategoryModel.find();

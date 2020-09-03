@@ -1,5 +1,6 @@
 const userModel = require('../models/User');
 const { validationResult } = require('express-validator');
+const {Validation} = require('../ErrorHandler/Validation/Validation');
 const bcryptjs = require('bcryptjs');
 
 //Registering a user
