@@ -22,16 +22,18 @@ const userSchema = new mongoose.Schema({
         lowercase: true
     },
 
+    mobile:{
+        type: Number,
+        trim : true,
+        required: true,
+        maxlength:10
+    },
+
     password:{
         type : String,
         trim : true,
         required : true,
         minlength : 6
-    },
-
-    about:{
-        type: String,
-        trim: true
     },
 
     history:{

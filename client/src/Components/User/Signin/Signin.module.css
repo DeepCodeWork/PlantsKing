@@ -1,0 +1,20 @@
+.homeSection{
+    background: url(../../../assets/images/login.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    /*background-attachment: fixed;*/
+    min-height: 500px;
+}
+
+.homeSection .darkOverlay{
+    background: rgba(0, 0, 0, 0.7);
+    width: 100%;
+    min-height: 700px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.form{
+    background: #4F74BA;
+}
