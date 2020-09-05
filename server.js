@@ -6,12 +6,14 @@ const categoryRoutes = require('./routes/Category');
 const productRoutes = require('./routes/Product');
 const config = require('config');
 const PORT = config.get('PORT');
+const cors = require('cors');
 
 //Using the env file
 require('dotenv').config();
 
 //Applying middleware
 app.use(express.json());
+app.use(cors());
 
 //Routes
 app.use( '/api' , userRoutes );
