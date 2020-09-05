@@ -1,12 +1,12 @@
 const CategoryModel = require('../models/Category');
-const {Validation} = require('../ErrorHandler/Validation/Validation');
+const {validation} = require('../ErrorHandler/Validation/Validation');
 
 //Add new category
 exports.createCategory = async (req, res) => {
 
    try {
         //Validation
-        Validation(req);
+        validation(req);
 
         //Saving doc
         const category = new CategoryModel(req.body);
@@ -67,3 +67,24 @@ exports.getAllCategory = async (req, res) => {
     }
 }
 
+//middleware 
+
+//fetching category by id
+exports.categoryById = async (req, res, next, id) => {
+    try {
+        const category = await CategoryModel.findById(id);
+
+        if(!category)
+            return res.status(404).json({status: 0, message: "Invalid category Id"})
+
+        req.category = category;
+        next();
+    } catch (error) {
+        
+    }
+}
+
+//Read the category
+exports.read = (req, res) => {
+    return res.status(200).json({status: 1, data: req.category});
+}

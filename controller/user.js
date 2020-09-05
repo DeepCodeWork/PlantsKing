@@ -1,6 +1,5 @@
 const userModel = require('../models/User');
-const { validationResult } = require('express-validator');
-const {Validation} = require('../ErrorHandler/Validation/Validation');
+const {validation} = require('../ErrorHandler/Validation/Validation');
 const bcryptjs = require('bcryptjs');
 
 //Registering a user
@@ -10,10 +9,7 @@ exports.RegisterUser = async (req, res)=> {
         const { email } = req.body;
 
         //Validation
-        const errors = validationResult(req)
-        if(!errors.isEmpty()){
-            return res.status(400).send({errors: errors.array()})
-        }
+        validation(req);
 
         //Check if user already exist
         const isUserExist = await userModel.findOne({ email: email });
@@ -42,10 +38,7 @@ exports.LoginUser = async (req, res) => {
         const { email, password } = req.body;
 
         //Validation
-        const errors = validationResult(req)
-        if(!errors.isEmpty()){
-            return res.status(400).send({errors: errors.array()})
-        }
+        validation(req)
 
         //checking email exist
         const isUserExist = await userModel.findOne({email: email});
@@ -66,6 +59,7 @@ exports.LoginUser = async (req, res) => {
         } })
     
     } catch (error) {
+        console.log(error)
         return res.status(500).json({ message : error });
     }
 }
@@ -92,6 +86,44 @@ exports.LogoutUserFromAllDevice = async (req, res) => {
         res.status(200).json({ message: "Logout successfully." });
     } catch (error) {
         res.status(401).json({ message: "Invalid Request"});
+    }
+}
+
+exports.getUserById = async (req, res, next, id) => {
+    
+    try {
+        const user = await userModel.findById(id);
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(500).json({status: 0, data: { message: "Server Error" }});
+    }
+}
+
+exports.read = (req, res) => {
+    try {
+        //Making password null
+        req.user.password = undefined
+
+        if(!req.user)
+            return res.status(404).json({status: 0, data: {message: "No user found"}})
+        
+        return res.status(200).json({status: 1, data: {user: req.user}});
+    } catch (error) {
+        return res.status(500).json({status: 0, data: {message: "Invalid request"}})
+    }
+}
+
+exports.update = (req, res) => {
+    try {
+        userModel.findByIdAndUpdate({_id: req.user._id},{$set: req.body}, {new: true}) 
+            .then(user => {
+                user.password = undefined;
+                return res.status(200).json({status: 1, data: {user: req.user}})
+            })
+            .catch(err => res.status(403).json({status: 0, data: {message: "Not Authorized"}}))
+    } catch (error) {
+        return res.status(500).json({status: 0, data: {message: "Invalid request"}})
     }
 }
 

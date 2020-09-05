@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
-//@Controller 
-const {RegisterUser, LoginUser, LogoutUser, LogoutUserFromAllDevice} = require('../controller/User');
-const {auth} = require('../middleware/Auth');
+const {RegisterUser, LoginUser, LogoutUser, LogoutUserFromAllDevice, getUserById, read, update} = require('../controller/User');
+const {auth, isAdmin} = require('../middleware/Auth');
 
 
 //@Routes
@@ -32,6 +30,27 @@ router.get('/user/logout',auth ,LogoutUser);
 //@method   GET
 router.get('/user/logoutAll',auth ,LogoutUserFromAllDevice);
 
+//@router   api/secret/:userId
+//@desc     Fetcing user by id
+//@access   PRIVATE
+//@method   GET
+router.get('/secret/:userId',auth, isAdmin , async (req, res)=>{
+    return res.status(200).json({ status: 1, data: {user: req.user} })
+});
 
+//@router   api/user/:userId
+//@desc     read user by id
+//@access   PRIVATE
+//@method   GET
+router.get('/user/:userId', auth, read);
+
+//@router   api/user/:userId
+//@desc     update user by id
+//@access   PRIVATE
+//@method   GET
+router.put('/user/:userId', auth, update);
+
+//Middleware
+router.param('userId', getUserById);
 
 module.exports = router;

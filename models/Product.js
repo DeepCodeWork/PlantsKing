@@ -15,7 +15,6 @@ const productSchema = new mongoose.Schema({
     description:{
         type : String,
         trim : true,
-        unique : true,
         required : true,
         maxlength : 2000
     },
@@ -36,6 +35,11 @@ const productSchema = new mongoose.Schema({
     quantity:{
         type : Number,
         required : true
+    },
+
+    sold: {
+        type : Number,
+        default : 0
     },
 
     image: {

@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const categoryErrorHandler = require('../ErrorHandler/Category/Category');
-
-//@Controller 
-const { createCategory, getAllCategory, deleteCategory, updateCategory } = require('../controller/Category');
 const {auth, isAdmin} = require('../middleware/Auth');
+const { createCategory, getAllCategory, deleteCategory, updateCategory, categoryById, read } = require('../controller/Category');
 
 
 //@Routes
@@ -32,6 +30,15 @@ router.patch('/category',auth, isAdmin, categoryErrorHandler, updateCategory);
 //@access   Admin
 //@method   delete
 router.delete('/category',auth, isAdmin, deleteCategory);
+
+//@router   api/category/:id
+//@desc     read category
+//@access   public
+//@method   get
+router.get('/category/:categoryId', read);
+
+//Middleware    
+router.param('categoryId', categoryById);
 
 
 
