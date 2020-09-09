@@ -34,7 +34,7 @@ exports.RegisterUser = async (req, res)=> {
 //Logging in user
 exports.LoginUser = async (req, res) => {
     try {
-
+        console.log(req.body);
         const { email, password } = req.body;
 
         //Validation

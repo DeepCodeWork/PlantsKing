@@ -12,7 +12,7 @@ exports.createCategory = async (req, res) => {
         const category = new CategoryModel(req.body);
         category.save()
             .then(data=> res.status(201).json({status:1, data:{ category: data } }))
-            .catch(err => res.status(401).json({status:0, message: err}))
+            .catch(err => res.status(203).json({status:0, message: err}))
    } catch (error) {
        res.status(500).json({status:0, message: error })
    }

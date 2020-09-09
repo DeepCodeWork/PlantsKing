@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,7 +14,15 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import userBar, { UserBar, UserBarMobile } from './OptionBar/UserBar';
+import { Button, ButtonGroup } from '@material-ui/core';
+import { isAuthenticated, isAdmin } from '../../../Auth/Auth';
+import { AdminBar, AdminBarMobile } from './OptionBar/AdminBar';
+import SideBar from '../Sidebar/SideBar';
 
+
+const userName = isAuthenticated()? isAuthenticated().user.name: null;
+console.log(userName)
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
@@ -115,8 +123,11 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
+      
+      {isAuthenticated() && <MenuItem>Hi {userName}</MenuItem>}
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   );
 
@@ -131,7 +142,7 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      {isAuthenticated() && !isAdmin() && (<div> <MenuItem>
         <IconButton aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="secondary">
             <MailIcon />
@@ -157,11 +168,42 @@ export default function PrimarySearchAppBar() {
           <AccountCircle />
         </IconButton>
         <p>Profile</p>
-      </MenuItem>
+      </MenuItem></div>)}
+      { isAuthenticated() && isAdmin() &&(
+        <div>
+          {AdminBarMobile()}
+        </div>
+      )}
+      { !isAuthenticated() &&(
+        <div>
+          {UserBarMobile()}
+        </div>
+      )}
     </Menu>
   );
 
+  const renderAdminMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={handleMobileMenuClose}
+    >
+      <Menu>
+        {AdminBarMobile()}
+      </Menu>
+    </Menu>
+  )
+    let show=false;
+    const toggleSidebar = () => {
+      show=!show;
+      console.log(show);
+    }
   return (
+  <div>
     <div className={classes.grow}>
       <AppBar position="static">
         <Toolbar>
@@ -170,6 +212,7 @@ export default function PrimarySearchAppBar() {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
+            onClick={toggleSidebar}
           >
             <MenuIcon />
           </IconButton>
@@ -190,18 +233,55 @@ export default function PrimarySearchAppBar() {
             />
           </div>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            {/* <IconButton aria-label="show 4 new mails" color="inherit">
+            <div>
+            {
+              !isAuthenticated() && (
+                <div className={classes.sectionDesktop}>
+                  {UserBar()}
+                </div>
+              )
+            }
+            {
+              isAuthenticated() && isAdmin() && (
+                <div>
+                <div className={classes.sectionDesktop}>
+                  {AdminBar()}
+                </div>
+                </div>
+              )
+            }
+            {/* {isAuthenticated() && isAdmin() && (
+          <div className={classes.sectionMobile}>
+            <IconButton
+              aria-label="show more"
+              aria-controls={mobileMenuId}
+              aria-haspopup="true"
+              onClick={renderAdminMobileMenu}
+              color="inherit"
+            >
+              <MoreIcon/>
+            </IconButton>
+
+          </div>)} */}
+
+
+          {/* USER MENU */}
+
+
+            {isAuthenticated() && !isAdmin() && (
+            <div className={classes.sectionDesktop}>
+            
+            <IconButton aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="secondary">
                 <MailIcon />
               </Badge>
-            </IconButton> */}
-            {/* <IconButton aria-label="show 17 new notifications" color="inherit">
+            </IconButton>
+            <IconButton aria-label="show 17 new notifications" color="inherit">
               <Badge badgeContent={17} color="secondary">
                 <NotificationsIcon />
               </Badge>
-            </IconButton> */}
-            {/* <IconButton
+            </IconButton>
+            <IconButton
               edge="end"
               aria-label="account of current user"
               aria-controls={menuId}
@@ -210,8 +290,10 @@ export default function PrimarySearchAppBar() {
               color="inherit"
             >
               <AccountCircle />
-            </IconButton> */}
+            </IconButton>
           </div>
+          )}
+          {(
           <div className={classes.sectionMobile}>
             <IconButton
               aria-label="show more"
@@ -222,11 +304,20 @@ export default function PrimarySearchAppBar() {
             >
               <MoreIcon />
             </IconButton>
-          </div>
+          </div>)}
+            </div>
         </Toolbar>
       </AppBar>
+      {renderAdminMobileMenu}
       {renderMobileMenu}
       {renderMenu}
     </div>
+    <div>
+      {show && <SideBar/>}
+    </div>
+  </div>
   );
 }
+
+
+

@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {RegisterUser, LoginUser, LogoutUser, LogoutUserFromAllDevice, getUserById, read, update} = require('../controller/User');
 const {auth, isAdmin} = require('../middleware/Auth');
+const addUser = require('../ErrorHandler/User/AddUser');
+const loginUser = require('../ErrorHandler/User/LoginUser');
 
 
 //@Routes
@@ -10,13 +12,13 @@ const {auth, isAdmin} = require('../middleware/Auth');
 //@desc     Register a user
 //@access   public
 //@method   POST
-router.post('/user', RegisterUser);
+router.post('/user', addUser, RegisterUser);
 
 //@router   api/user/login
 //@desc     Login a user
 //@access   public
 //@method   POST
-router.post('/user/login', LoginUser);
+router.post('/user/login', loginUser, LoginUser);
 
 //@router   api/user/login
 //@desc     Login a user

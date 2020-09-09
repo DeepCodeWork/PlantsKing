@@ -1,0 +1,11 @@
+.alertBox{
+    text-align: center;
+    margin-top: 100px;
+    margin-bottom: -100px;
+    min-width: 10em;
+}
+
+.alert-danger{
+    background-color : #c53151;
+    color : #c32148;
+}

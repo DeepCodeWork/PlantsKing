@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import Classes from './Form.module.css';
-import { API } from '../../../Config/Config';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { setAlert } from '../../../../Store/actions/alert';
+import { register } from '../../../../Store/actions/auth';
 
-const SignupForm = () => {
+const SignupForm = (props) => {
 
     const [values, setValues] = useState({
         name:'',
@@ -11,27 +14,24 @@ const SignupForm = () => {
         password:'',
         confirmPassword:'',
         error:'',
-        success:false
+        success:false, 
+        myStyle:{}
     });
 
     const handleChange = (attribute) => event => {
         setValues({ ...values, error: false, [attribute]: event.target.value})
     }
 
-    const { name, email, password, mobile } = values;
-
-    const registerUser = () => {
-        fetch(`${API}/signup`,{
-            method: postMessage,
-            header: {
-                Accept: 'application/'
-            }
-        })
-    }
+    const { name, email, password, mobile, confirmPassword } = values;
 
     const clickSubmit = event => {
+        
         event.preventDefault();
-        console.log(name, email, mobile, password)
+        if( password !== confirmPassword )
+            props.setAlert( 'The passwords do not match', 'danger' );
+        else   
+            props.register({name, email, mobile, password})
+           
     }
 
 
@@ -43,27 +43,27 @@ const SignupForm = () => {
                         <form>
                             <div className="form-group">
                                 <input className="form-control form-control-md" type="text" 
-                                    onChange={handleChange('name')} placeholder="Name"/>
+                                    onChange={handleChange('name')}  placeholder="Name" value={name}/>
                             </div>
 
                             <div className="form-group">
                                 <input className="form-control form-control-md" type="email" 
-                                    onChange={handleChange('email')} placeholder="Email"/>
+                                    onChange={handleChange('email')} placeholder="Email" value={email}/>
                             </div>
 
                             <div className="form-group">
                                 <input className="form-control form-control-md" type="text"
-                                    onChange={handleChange('mobile')} placeholder="Mobile"/>
+                                    onChange={handleChange('mobile')} placeholder="Mobile" value={mobile}/>
                             </div>
 
                             <div className="form-group">
                                 <input className="form-control form-control-md" type="password" 
-                                    onChange={handleChange('password')} placeholder="Password"/>
+                                    onChange={handleChange('password')} placeholder="Password" value={password}/>
                             </div>
 
                             <div className="form-group">
-                                <input className="form-control form-control-md" type="password"  
-                                    onChange={handleChange('confirmPassword')} placeholder="Confirm Password"/>
+                                <input className="form-control form-control-md" type="password" onChange={handleChange('confirmPassword')} 
+                                style={values.myStyle} placeholder="Confirm Password" value={confirmPassword}/>
                             </div>
 
                             <div className="form-group">
@@ -72,7 +72,7 @@ const SignupForm = () => {
                         </form>
 
                         <div className="pt-2">
-                            <p>Already Registered? Login</p>
+                            <p>Already Registered? <Link to='/signin' style={{color:'#1f5673'}}>Login</Link></p>
                         </div>
                     </div>
                 </div>
@@ -80,4 +80,4 @@ const SignupForm = () => {
     )
 }
 
-export default SignupForm;
+export default connect( null, {setAlert, register} )(SignupForm);

@@ -2,14 +2,13 @@ const ProductModel = require('../models/Product');
 const formidable = require('formidable');
 const _ = require('lodash');
 const fs = require('fs');
-const { nextTick } = require('process');
-const { sortBy } = require('lodash');
 
 
 //Add New Products
 exports.create = async (req, res) => {
 
   try {
+
         let form = new formidable.IncomingForm();
         form.keepExtensions = true;
         form.parse(req, (err, fields, files) => {
@@ -142,7 +141,6 @@ exports.list = async (req, res) => {
 
     try {
         ProductModel.find()
-            .select("-image")
             .populate('category')
             .sort([[sortBy, order]])
             .limit(limit)
@@ -215,6 +213,7 @@ exports.listBySearch = (req, res) => {
     }
  
     ProductModel.find(findArgs)
+        .select("-image")
         .select("-photo")
         .populate("category")
         .sort([[sortBy, order]])
@@ -235,11 +234,10 @@ exports.listBySearch = (req, res) => {
 
 
 //Get Product Image
-exports.getProductImage = (req, res, next) => {
+exports.getProductImage = (req, res) => {
     if(req.product.image.data){
         res.set('Content-Type', req.product.image.contentType);
-        return res.status(200).json({ status: 1, data: req.product.image.data })
+        return res.status(200).send( req.product.image.data )
     }
 
-    next();
 }

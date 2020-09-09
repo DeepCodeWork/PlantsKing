@@ -6,8 +6,8 @@ const secretKey = config.get('jwt_secret_key');
 exports.auth = async (req, res, next) => {
 
     try {
-        
-        const token = req.header('Authorization').replace('Bearer','');
+
+        const token = req.header('Authorization').replace('Bearer ','');
         const decoded = jwt.verify(token, secretKey);
         const user = await UserModel.findOne({ _id: decoded._id, 'tokens.token': token});
         if(!user){
@@ -18,13 +18,14 @@ exports.auth = async (req, res, next) => {
             next();
         }
         } catch (error) {
-            console.log(error)
             return res.status(400).json({ message: "Invalid Request" })
         }
 }
 
 exports.isAdmin = async (req, res, next) => {
     try {
+
+        console.log(req.user.role)
         if(req.user.role === 'ADMIN')
             next();
         else

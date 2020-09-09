@@ -11,7 +11,7 @@ const { createCategory, getAllCategory, deleteCategory, updateCategory, category
 //@desc     create category
 //@access   Admin
 //@method   POST
-router.post('/category',auth, isAdmin, categoryErrorHandler, createCategory);
+router.post('/category/',auth, isAdmin, categoryErrorHandler, createCategory);
 
 //@router   api/category
 //@desc     create category

@@ -7,13 +7,16 @@ const productRoutes = require('./routes/Product');
 const config = require('config');
 const PORT = config.get('PORT');
 const cors = require('cors');
-
-//Using the env file
-require('dotenv').config();
+const bodyParser = require('body-parser');
+const morgan = require('morgan')
 
 //Applying middleware
-app.use(express.json());
+//app.use(cors());
+
+app.use(express.json({extended:false}))
 app.use(cors());
+
+
 
 //Routes
 app.use( '/api' , userRoutes );
